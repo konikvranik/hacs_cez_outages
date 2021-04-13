@@ -4,6 +4,7 @@ For more details about this platform, please refer to the documentation at
 https://home-assistant.io/components/sensor.rest/
 Modified to parse a JSON reply and store data as attributes
 """
+import datetime
 import json
 import logging
 import re
@@ -44,29 +45,19 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     async_add_entities([sensor])
 
 
-def anymatch(value, patterns):
-    for x in cv.ensure_list(patterns):
-        _LOGGER.debug("matching %s against %s", value, x)
-        r = re.search(x, value)
-        if r:
-            _LOGGER.debug("Matched %s", r)
-            return r.group(0)
-    return False
-
-
 class JSONRestSensor(Entity):
     """Implementation of a REST sensor."""
 
     def __init__(self, hass, rest, name, streets, street_numbers, parcel_numbers, refresh_rate):
         """Initialize the REST sensor."""
-        self._street_numbers = street_numbers
         self._streets = streets if streets else []
         self._hass = hass
         self.rest = rest
         self._name = name
         self._attributes = {}
         self._state = STATE_UNKNOWN
-        self._parcel_numbers = parcel_numbers
+        self._refresh_rate = datetime.timedelta(seconds=refresh_rate)
+        self._last_update = datetime.datetime.now() - self._refresh_rate
 
     @property
     def unique_id(self):
@@ -97,6 +88,8 @@ class JSONRestSensor(Entity):
 
     def update(self):
         """Get the latest data from REST API and update the state."""
+        if self._last_update + self._refresh_rate > datetime.datetime.now():
+            return
         outages = []
         outages_in_town = []
         for r in self.rest:
