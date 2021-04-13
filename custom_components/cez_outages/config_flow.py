@@ -53,8 +53,6 @@ class HDOFlowHandler(config_entries.ConfigFlow):
             _LOGGER.error("Error fetching data: %s", self._request)
             self.data = None
 
-
-
     async def _show_address_form(self, user_input):
         """Configure the form."""
         # Defaults

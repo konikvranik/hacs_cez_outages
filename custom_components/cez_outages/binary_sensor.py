@@ -23,9 +23,9 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(SCHEMA)
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass, config, async_add_entities):
+async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up ESPHome binary sensors based on a config entry."""
-    config = config.data
+    config = config_entry.data
     name = config.get(CONF_NAME)
     url = config.get(CONF_RESOURCE, "https://api.bezstavy.cz/cezd/api/inspectaddress/%s")
     method = config.get(CONF_METHOD, "GET")
@@ -38,8 +38,10 @@ async def async_setup_entry(hass, config, async_add_entities):
         rest.append(client)
         await hass.async_add_executor_job(client.update)
 
-    async_add_entities([JSONRestSensor(hass, rest, name, config.get(CONF_STREET), config.get(CONF_STREET_NO),
-                                       config.get(CONF_PARCEL_NO), config.get(CONF_REFRESH_RATE))])
+    sensor = JSONRestSensor(hass, rest, name, config.get(CONF_STREET), config.get(CONF_STREET_NO),
+                            config.get(CONF_PARCEL_NO), config.get(CONF_REFRESH_RATE))
+    config_entry.unique_id = sensor.unique_id
+    async_add_entities([sensor])
 
 
 def anymatch(value, patterns):
