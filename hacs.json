@@ -1,7 +1,6 @@
 {
-  "name": "ČEZ HDO & outages",
+  "name": "ČEZ outages",
   "domains": [
-    "cez_hdo",
     "cez_outages",
     "binary_sensor"
   ],
