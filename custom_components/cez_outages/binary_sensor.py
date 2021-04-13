@@ -7,8 +7,8 @@ Modified to parse a JSON reply and store data as attributes
 import json
 import logging
 import re
-
 import requests
+from functools import reduce
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
     CONF_NAME, STATE_UNKNOWN, CONF_RESOURCE, CONF_METHOD,
@@ -58,13 +58,30 @@ class JSONRestSensor(Entity):
     def __init__(self, hass, rest, name, streets, street_numbers, parcel_numbers, refresh_rate):
         """Initialize the REST sensor."""
         self._street_numbers = street_numbers
-        self._streets = streets if streets else '.*'
+        self._streets = streets if streets else []
         self._hass = hass
         self.rest = rest
         self._name = name
         self._attributes = {}
         self._state = STATE_UNKNOWN
         self._parcel_numbers = parcel_numbers
+
+    @property
+    def unique_id(self):
+        """Return Unique ID string."""
+        return reduce((lambda x, y: "%s,%s" % (x, y)), self._streets)
+
+    @property
+    def device_info(self):
+        """Information about this entity/device."""
+        return {
+            "identifiers": {(DOMAIN, self._code)},
+            # If desired, the name for the device could be different to the entity
+            "name": self.name,
+            "sw_version": VERSION,
+            "model": "REST call",
+            "manufacturer": "ČEZ distribuce",
+        }
 
     @property
     def name(self):
@@ -89,7 +106,7 @@ class JSONRestSensor(Entity):
 
         self._attributes['outages'] = outages
         self._attributes['outages_in_town'] = outages_in_town
-        self._attributes['times'] = list(map(lambda x: x["opened_at"], outages))
+        self._attributes['times'] = list(map(lambda x: {"from": x["opened_at"], "to": x["fix_expected_at"]}, outages))
 
         self._state = STATE_ON if outages else STATE_OFF
 
