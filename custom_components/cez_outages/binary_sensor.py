@@ -16,7 +16,7 @@ from homeassistant.const import (
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.entity import Entity
 
-from . import CONF_STREET, CONF_STREET_NO, CONF_PARCEL_NO, CONF_REFRESH_RATE, SCHEMA, DOMAIN
+from . import CONF_STREET, CONF_STREET_NO, CONF_PARCEL_NO, CONF_REFRESH_RATE, SCHEMA, DOMAIN, VERSION
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(SCHEMA)
 
@@ -75,7 +75,7 @@ class JSONRestSensor(Entity):
     def device_info(self):
         """Information about this entity/device."""
         return {
-            "identifiers": {(DOMAIN, self._code)},
+            "identifiers": {(DOMAIN, self._name), (DOMAIN, self.unique_id)},
             # If desired, the name for the device could be different to the entity
             "name": self.name,
             "sw_version": VERSION,
