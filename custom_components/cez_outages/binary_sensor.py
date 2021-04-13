@@ -100,8 +100,11 @@ class JSONRestSensor(Entity):
         for r in self.rest:
             self._hass.async_add_executor_job(r.update)
             value = r.data
-            outages += value["outages"]
-            outages_in_town += value["outages_in_town"]
+            if value:
+                if "outages" in value and value["outages"]:
+                    outages += value["outages"]
+                if "outages_in_town" in value and value["outages_in_town"]:
+                    outages_in_town += value["outages_in_town"]
             _LOGGER.debug("Raw REST data: %s" % value)
 
         self._attributes['outages'] = outages
