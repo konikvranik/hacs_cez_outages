@@ -10,6 +10,7 @@ import logging
 from functools import reduce
 
 import requests
+from homeassistant.components.binary_sensor import DEVICE_CLASS_PROBLEM
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
     CONF_NAME, STATE_UNKNOWN, CONF_RESOURCE, CONF_METHOD,
@@ -19,8 +20,8 @@ from homeassistant.helpers.entity import Entity
 from . import CONF_STREET, CONF_STREET_NO, CONF_PARCEL_NO, CONF_REFRESH_RATE, SCHEMA, DOMAIN, VERSION
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(SCHEMA)
-
 _LOGGER = logging.getLogger(__name__)
+SCAN_INTERVAL = datetime.timedelta(hours=1)
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
@@ -57,6 +58,8 @@ class JSONRestSensor(Entity):
         self._state = STATE_UNKNOWN
         self._refresh_rate = datetime.timedelta(seconds=refresh_rate)
         self._last_update = datetime.datetime.now() - self._refresh_rate
+        global SCAN_INTERVAL
+        SCAN_INTERVAL = self._refresh_rate
 
     @property
     def unique_id(self):
@@ -116,6 +119,10 @@ class JSONRestSensor(Entity):
         """
 
         return self._attributes
+
+    @property
+    def device_class(self):
+        return DEVICE_CLASS_PROBLEM
 
 
 class JSONRestClient(object):
