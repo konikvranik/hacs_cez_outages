@@ -21,7 +21,6 @@ from . import CONF_STREET, CONF_STREET_NO, CONF_PARCEL_NO, CONF_REFRESH_RATE, SC
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(SCHEMA)
 _LOGGER = logging.getLogger(__name__)
-SCAN_INTERVAL = datetime.timedelta(hours=1)
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
@@ -58,8 +57,6 @@ class JSONRestSensor(Entity):
         self._state = STATE_UNKNOWN
         self._refresh_rate = datetime.timedelta(seconds=refresh_rate)
         self._last_update = datetime.datetime.now() - self._refresh_rate
-        global SCAN_INTERVAL
-        SCAN_INTERVAL = self._refresh_rate
 
     @property
     def unique_id(self):
