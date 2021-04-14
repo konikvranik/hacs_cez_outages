@@ -18,7 +18,7 @@ CONF_STREET = "street"
 CONF_REFRESH_RATE = 'refreshRate'
 CONF_MAX_COUNT = 'maxCount'
 
-MANIFEST = json.load(open("%s/mainfest.json" % os.path.dirname(os.path.realpath(__file__))))
+MANIFEST = json.load(open("%s/manifest.json" % os.path.dirname(os.path.realpath(__file__))))
 DOMAIN = MANIFEST["domain"]
 VERSION = MANIFEST["version"]
 DEFAULT_NAME = MANIFEST["name"]
