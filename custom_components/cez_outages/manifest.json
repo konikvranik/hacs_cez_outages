@@ -1,7 +1,7 @@
 {
   "domain": "cez_outages",
   "name": "ČEZ outages",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "documentation": "https://github.com/konikvranik/hacs_cez",
   "requirements": [],
   "config_flow": true,
@@ -9,6 +9,6 @@
   "codeowners": [
     "@konikvranik"
   ],
-  "icon": "https://upload.wikimedia.org/wikipedia/commons/7/76/%C4%8Cez_logo.PNG",
-  "logo": "https://mu.kutnahora.cz/uploads/download/cezdistribuce_logonew.jpg"
+  "icon": "https://brands.home-assistant.io/cez_outages/icon.png",
+  "logo": "https://brands.home-assistant.io/cez_outages/logo.png"
 }

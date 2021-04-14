@@ -1,3 +1,4 @@
+import json
 import logging
 
 import requests
@@ -15,11 +16,12 @@ CONF_STREET = "street"
 CONF_REFRESH_RATE = 'refreshRate'
 CONF_MAX_COUNT = 'maxCount'
 
-DOMAIN = "cez_outages"
-VERSION = "0.1.0"
+MANIFEST = json.load(open("mainfest.json"))
+DOMAIN = MANIFEST["domain"]
+VERSION = MANIFEST["version"]
+DEFAULT_NAME = MANIFEST["name"]
 PLATFORM = "binary_sensor"
 DEFAULT_METHOD = 'GET'
-DEFAULT_NAME = 'ČEZ outages'
 DEFAULT_VERIFY_SSL = True
 ISSUE_URL = "https://github.com/konikvranik/hacs_cez/issues"
 SCHEMA = {

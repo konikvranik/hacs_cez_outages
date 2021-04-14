@@ -7,14 +7,13 @@ Modified to parse a JSON reply and store data as attributes
 import datetime
 import json
 import logging
-import re
-import requests
 from functools import reduce
+
+import requests
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
     CONF_NAME, STATE_UNKNOWN, CONF_RESOURCE, CONF_METHOD,
-    CONF_VERIFY_SSL, CONF_PAYLOAD, CONF_HEADERS, STATE_OFF, STATE_ON)
-from homeassistant.helpers import config_validation as cv
+    CONF_VERIFY_SSL, CONF_PAYLOAD, STATE_OFF, STATE_ON)
 from homeassistant.helpers.entity import Entity
 
 from . import CONF_STREET, CONF_STREET_NO, CONF_PARCEL_NO, CONF_REFRESH_RATE, SCHEMA, DOMAIN, VERSION
@@ -107,6 +106,8 @@ class JSONRestSensor(Entity):
         self._attributes['times'] = list(map(lambda x: {"from": x["opened_at"], "to": x["fix_expected_at"]}, outages))
 
         self._state = STATE_ON if outages else STATE_OFF
+
+        self._last_update = datetime.datetime.now()
 
     @property
     def state_attributes(self):
