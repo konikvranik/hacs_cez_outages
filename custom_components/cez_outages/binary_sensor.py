@@ -13,8 +13,9 @@ import requests
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass, BinarySensorEntity
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
-    CONF_NAME, STATE_UNKNOWN, CONF_RESOURCE, CONF_METHOD,
-    CONF_VERIFY_SSL, CONF_PAYLOAD, STATE_OFF, STATE_ON)
+    CONF_NAME, CONF_RESOURCE, CONF_METHOD,
+    CONF_VERIFY_SSL, CONF_PAYLOAD)
+from homeassistant.helpers.entity import DeviceInfo
 
 from . import CONF_STREET, CONF_STREET_NO, CONF_PARCEL_NO, CONF_REFRESH_RATE, SCHEMA, DOMAIN, VERSION
 
@@ -51,38 +52,19 @@ class JSONRestSensor(BinarySensorEntity):
         self._streets = streets if streets else []
         self._hass = hass
         self.rest = rest
-        self._name = name
-        self._state = STATE_UNKNOWN
+        self._attr_unique_id = reduce((lambda x, y: "%s,%s" % (x, y)), self._streets)
+        self._attr_name = name
         self._refresh_rate = datetime.timedelta(seconds=refresh_rate)
         self._last_update = datetime.datetime.now() - self._refresh_rate
         self._attr_device_class = BinarySensorDeviceClass.PROBLEM
-
-    @property
-    def unique_id(self):
-        """Return Unique ID string."""
-        return reduce((lambda x, y: "%s,%s" % (x, y)), self._streets)
-
-    @property
-    def device_info(self):
-        """Information about this entity/device."""
-        return {
-            "identifiers": {(DOMAIN, self._name), (DOMAIN, self.unique_id)},
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, self._name), (DOMAIN, self.unique_id)},
             # If desired, the name for the device could be different to the entity
-            "name": self.name,
-            "sw_version": VERSION,
-            "model": "REST call",
-            "manufacturer": "ČEZ distribuce",
-        }
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return self._name
-
-    @property
-    def state(self):
-        """Return the state of the device."""
-        return self._state
+            name=self.name,
+            sw_version=VERSION,
+            model="REST call",
+            manufacturer="ČEZ distribuce"
+        )
 
     def update(self):
         """Get the latest data from REST API and update the state."""
@@ -105,7 +87,7 @@ class JSONRestSensor(BinarySensorEntity):
         self._attr_extra_state_attributes['times'] = list(
             map(lambda x: {"from": x["opened_at"], "to": x["fix_expected_at"]}, outages))
 
-        self._state = STATE_ON if outages else STATE_OFF
+        self._attr_is_on = bool(outages)
 
         self._last_update = datetime.datetime.now()
 
