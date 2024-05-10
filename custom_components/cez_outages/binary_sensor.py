@@ -58,7 +58,7 @@ class JSONRestSensor(BinarySensorEntity):
         self._last_update = datetime.datetime.now() - self._refresh_rate
         self._attr_device_class = BinarySensorDeviceClass.PROBLEM
         self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, self._name), (DOMAIN, self.unique_id)},
+            identifiers={(DOMAIN, self._attr_name), (DOMAIN, self.unique_id)},
             # If desired, the name for the device could be different to the entity
             name=self.name,
             sw_version=VERSION,
