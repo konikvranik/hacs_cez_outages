@@ -25,7 +25,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(SCHEMA)
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass:HomeAssistant, config_entry:ConfigEntry, async_add_entities):
+async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, async_add_entities):
     """Set up ESPHome binary sensors based on a config entry."""
     config = config_entry.data
     name = config.get(CONF_NAME)
@@ -58,6 +58,7 @@ class JSONRestSensor(BinarySensorEntity):
         self._refresh_rate = datetime.timedelta(seconds=refresh_rate)
         self._last_update = datetime.datetime.now() - self._refresh_rate
         self._attr_device_class = BinarySensorDeviceClass.PROBLEM
+        self._attr_extra_state_attributes = {}
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._attr_name), (DOMAIN, self.unique_id)},
             # If desired, the name for the device could be different to the entity
@@ -74,7 +75,7 @@ class JSONRestSensor(BinarySensorEntity):
         outages = []
         outages_in_town = []
         for r in self.rest:
-            self._hass.async_add_executor_job(r.update)
+            self._hass.add_job(r.update)
             value = r.data
             if value:
                 if "outages" in value and value["outages"]:
@@ -83,9 +84,9 @@ class JSONRestSensor(BinarySensorEntity):
                     outages_in_town += value["outages_in_town"]
             _LOGGER.debug("Raw REST data: %s" % value)
 
-        self._attr_extra_state_attributes['outages'] = outages
-        self._attr_extra_state_attributes['outages_in_town'] = outages_in_town
-        self._attr_extra_state_attributes['times'] = list(
+        self.extra_state_attributes['outages'] = outages
+        self.extra_state_attributes['outages_in_town'] = outages_in_town
+        self.extra_state_attributes['times'] = list(
             map(lambda x: {"from": x["opened_at"], "to": x["fix_expected_at"]}, outages))
 
         self._attr_is_on = bool(outages)
