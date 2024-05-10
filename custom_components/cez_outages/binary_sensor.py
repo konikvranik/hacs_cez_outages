@@ -10,12 +10,11 @@ import logging
 from functools import reduce
 
 import requests
-from homeassistant.components.binary_sensor import BinarySensorDeviceClass
+from homeassistant.components.binary_sensor import BinarySensorDeviceClass, BinarySensorEntity
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
     CONF_NAME, STATE_UNKNOWN, CONF_RESOURCE, CONF_METHOD,
     CONF_VERIFY_SSL, CONF_PAYLOAD, STATE_OFF, STATE_ON)
-from homeassistant.helpers.entity import Entity
 
 from . import CONF_STREET, CONF_STREET_NO, CONF_PARCEL_NO, CONF_REFRESH_RATE, SCHEMA, DOMAIN, VERSION
 
@@ -44,7 +43,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     async_add_entities([sensor])
 
 
-class JSONRestSensor(Entity):
+class JSONRestSensor(BinarySensorEntity):
     """Implementation of a REST sensor."""
 
     def __init__(self, hass, rest, name, streets, street_numbers, parcel_numbers, refresh_rate):
@@ -53,10 +52,10 @@ class JSONRestSensor(Entity):
         self._hass = hass
         self.rest = rest
         self._name = name
-        self._attributes = {}
         self._state = STATE_UNKNOWN
         self._refresh_rate = datetime.timedelta(seconds=refresh_rate)
         self._last_update = datetime.datetime.now() - self._refresh_rate
+        self._attr_device_class = BinarySensorDeviceClass.PROBLEM
 
     @property
     def unique_id(self):
@@ -101,25 +100,14 @@ class JSONRestSensor(Entity):
                     outages_in_town += value["outages_in_town"]
             _LOGGER.debug("Raw REST data: %s" % value)
 
-        self._attributes['outages'] = outages
-        self._attributes['outages_in_town'] = outages_in_town
-        self._attributes['times'] = list(map(lambda x: {"from": x["opened_at"], "to": x["fix_expected_at"]}, outages))
+        self._attr_extra_state_attributes['outages'] = outages
+        self._attr_extra_state_attributes['outages_in_town'] = outages_in_town
+        self._attr_extra_state_attributes['times'] = list(
+            map(lambda x: {"from": x["opened_at"], "to": x["fix_expected_at"]}, outages))
 
         self._state = STATE_ON if outages else STATE_OFF
 
         self._last_update = datetime.datetime.now()
-
-    @property
-    def extra_state_attributes(self):
-        """Return the attributes of the entity.
-           Provide the parsed JSON data (if any).
-        """
-
-        return self._attributes
-
-    @property
-    def device_class(self):
-        return BinarySensorDeviceClass.PROBLEM
 
 
 class JSONRestClient(object):
