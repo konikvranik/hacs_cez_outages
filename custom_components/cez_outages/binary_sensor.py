@@ -10,7 +10,7 @@ import logging
 from functools import reduce
 
 import requests
-from homeassistant.components.binary_sensor import DEVICE_CLASS_PROBLEM
+from homeassistant.components.binary_sensor import BinarySensorDeviceClass
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
     CONF_NAME, STATE_UNKNOWN, CONF_RESOURCE, CONF_METHOD,
@@ -119,7 +119,7 @@ class JSONRestSensor(Entity):
 
     @property
     def device_class(self):
-        return DEVICE_CLASS_PROBLEM
+        return BinarySensorDeviceClass.PROBLEM
 
 
 class JSONRestClient(object):
