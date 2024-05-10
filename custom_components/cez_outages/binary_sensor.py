@@ -110,7 +110,7 @@ class JSONRestSensor(Entity):
         self._last_update = datetime.datetime.now()
 
     @property
-    def state_attributes(self):
+    def extra_state_attributes(self):
         """Return the attributes of the entity.
            Provide the parsed JSON data (if any).
         """
