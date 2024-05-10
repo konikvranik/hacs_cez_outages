@@ -8,8 +8,8 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_NAME, CONF_VERIFY_SSL, CONF_FORCE_UPDATE
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv
-from homeassistant.helpers.typing import HomeAssistantType
 from voluptuous import ALLOW_EXTRA
 
 CONF_PARCEL_NO = "parcelNo"
@@ -54,7 +54,7 @@ async def async_setup_entry(hass, entry):
 
 
 async def platform_async_setup_entry(
-        hass: HomeAssistantType,
+        hass: HomeAssistant,
         config_entry: ConfigEntry,
         async_add_entities,
         *,
