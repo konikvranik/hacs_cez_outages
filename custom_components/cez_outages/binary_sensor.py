@@ -12,9 +12,11 @@ from functools import reduce
 import requests
 from homeassistant.components.binary_sensor import BinarySensorDeviceClass, BinarySensorEntity
 from homeassistant.components.sensor import PLATFORM_SCHEMA
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     CONF_NAME, CONF_RESOURCE, CONF_METHOD,
     CONF_VERIFY_SSL, CONF_PAYLOAD)
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import DeviceInfo
 
 from . import CONF_STREET, CONF_STREET_NO, CONF_PARCEL_NO, CONF_REFRESH_RATE, SCHEMA, DOMAIN, VERSION
@@ -23,7 +25,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(SCHEMA)
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(hass, config_entry, async_add_entities):
+async def async_setup_entry(hass:HomeAssistant, config_entry:ConfigEntry, async_add_entities):
     """Set up ESPHome binary sensors based on a config entry."""
     config = config_entry.data
     name = config.get(CONF_NAME)
@@ -40,7 +42,6 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     sensor = JSONRestSensor(hass, rest, name, config.get(CONF_STREET), config.get(CONF_STREET_NO),
                             config.get(CONF_PARCEL_NO), config.get(CONF_REFRESH_RATE))
-    config_entry.unique_id = sensor.unique_id
     async_add_entities([sensor])
 
 
