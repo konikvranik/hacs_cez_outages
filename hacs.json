@@ -1,13 +1,6 @@
 {
-  "name": "ČEZ outages",
-  "domains": [
-    "cez_outages",
-    "binary_sensor"
-  ],
-  "homeassistant": "0.109.0",
-  "country": "CZ",
-  "render_readme": true,
-  "iot_class": "Cloud Polling",
-  "icon": "https://upload.wikimedia.org/wikipedia/commons/7/76/%C4%8Cez_logo.PNG",
-  "logo": "https://mu.kutnahora.cz/uploads/download/cezdistribuce_logonew.jpg"
+	"name": "ČEZ outages",
+	"homeassistant": "2024.11.0",
+	"country": "CZ",
+	"render_readme": true
 }

@@ -1,14 +1,14 @@
 {
+  "version": "1.0.1",
   "domain": "cez_outages",
   "name": "ČEZ outages",
-  "version": "0.1.1",
-  "documentation": "https://github.com/konikvranik/hacs_cez",
-  "requirements": [],
-  "config_flow": true,
-  "dependencies": [],
   "codeowners": [
     "@konikvranik"
   ],
+  "documentation": "https://github.com/konikvranik/hacs_cez",
+  "config_flow": true,
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/konikvranik/hacs_cez_outages/issues",
   "icon": "https://brands.home-assistant.io/cez_outages/icon.png",
   "logo": "https://brands.home-assistant.io/cez_outages/logo.png"
 }
