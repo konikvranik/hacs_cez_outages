@@ -1,4 +1,3 @@
-import datetime
 import json
 import logging
 import os
@@ -48,7 +47,7 @@ async def async_setup_entry(hass, entry):
     _LOGGER.debug(config)
 
     # Register our service with Home Assistant.
-    hass.async_create_task(hass.config_entries.async_forward_entry_setup(entry, PLATFORM))
+    hass.async_create_task(hass.config_entries.async_forward_entry_setups(entry, [PLATFORM]))
     # Return boolean to indicate that initialization was successfully.
     return True
 
@@ -72,7 +71,8 @@ async def platform_async_setup_entry(
     config_entry.options = config_entry.data
     config_entry.add_update_listener(update_listener)
     # Add sensor
-    return await hass.config_entries.async_forward_entry_setup(config_entry, PLATFORM)
+    await hass.config_entries.async_forward_entry_setups(config_entry, [PLATFORM])
+    return True
 
 
 async def async_remove_entry(hass, config_entry):
@@ -88,7 +88,7 @@ async def update_listener(hass, entry):
     """Update listener."""
     entry.data = entry.options
     await hass.config_entries.async_forward_entry_unload(entry, PLATFORM)
-    hass.async_add_job(hass.config_entries.async_forward_entry_setup(entry, PLATFORM))
+    hass.async_add_job(hass.config_entries.async_forward_entry_setups(entry, [PLATFORM]))
 
 
 def _call_request(request):
